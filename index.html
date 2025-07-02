@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>豚 BUTA</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Baloo+2:wght@700&display=swap');
+
+        :root {
+            --bg-color: #fffbff; 
+            --primary-color: #f4a2b8;
+            --secondary-color: #f97316;
+            --text-color: #57453a;
+            --border-color: #fce7f3;
+            --white-color: #ffffff;
+        }
+
+        body {
+            /* The default, readable font */
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: var(--white-color);
+            border: 3px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px 35px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        h1 {
+            /* The fun, thematic font */
+            font-family: 'Baloo 2', cursive;
+            color: var(--primary-color);
+            font-size: 3.5rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 30px;
+            text-align: left;
+            align-items: stretch; 
+        }
+
+        .rules-column {
+            flex: 4;
+            display: flex;
+        }
+
+        .game-column {
+            flex: 6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .rules {
+            background-color: #fff7f9;
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .rules h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid;
+            padding-bottom: 8px;
+            font-family: 'Baloo 2', cursive;
+            flex-shrink: 0;
+        }
+        .rules ol {
+            padding-left: 25px;
+            line-height: 1.8;
+            font-size: 1rem; /* Adjusted font-size for better fit */
+            overflow-y: auto;
+            flex-grow: 1;
+            /* The specific font-family for rules is now REMOVED */
+            /* It will now use the font from the 'body' tag */
+        }
+        .rules strong {
+            color: var(--secondary-color);
+        }
+        .rules .disaster {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .game-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 20px;
+            width: 100%;
+            flex-grow: 1; 
+        }
+
+        .score-container {
+            margin-bottom: 20px;
+        }
+        .score-container p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            font-family: 'Baloo 2', cursive;
+        }
+        #round-score {
+            font-family: 'Baloo 2', cursive;
+            font-size: 8rem;
+            color: var(--primary-color);
+            line-height: 1;
+        }
+
+        #die-display {
+            font-size: 6rem;
+        }
+
+        #game-status {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            min-height: 30px;
+            margin-top: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            padding: 15px 35px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Noto Sans TC', sans-serif;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        #roll-btn { background-color: var(--primary-color); }
+        #hold-btn { background-color: var(--secondary-color); }
+        #reset-btn { background-color: #6b7280; }
+        .controls button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+        .controls button:disabled {
+            background-color: #d1d5db;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+            }
+            h1 { font-size: 2.5rem; }
+            #round-score { font-size: 6rem; }
+            #die-display { font-size: 5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>🐷 豚 (BUTA)</h1>
+        
+        <div class="main-content">
+            <div class="rules-column">
+                <div class="rules">
+                    <h2>遊戲規則</h2>
+                    <ol>
+                        <li><strong>遊戲目標：</strong>成為第一位總分累積到 100 分的玩家。</li>
+                        <li><strong>回合流程：</strong>老師點擊 <strong>[擲骰子]</strong>，畫面會顯示點數，並將點數加入「本回合分數」。</li>
+                        <li><strong>學生決策：</strong>每擲一次骰子後，還沒出局的學生要決定「繼續」或「收下」。
+                            <ul>
+                                <li><strong>繼續 (Roll)：</strong>留在場上，挑戰更高的回合分數，但要承擔風險。</li>
+                                <li><strong>收下 (Hold)：</strong>安全下莊！將目前的「本回合分數」加入自己的總分裡，並結束這一回合的行動。</li>
+                            </ul>
+                        </li>
+                        <li><span class="disaster">災難降臨：</span>如果不幸擲出 <strong>1</strong>，本回合分數立刻**歸零**！所有還在場上的學生都不能得分，並強制結束此回合。</li>
+                        <li><strong>回合結束：</strong>老師點擊 <strong>[收下分數]</strong> 按鈕，代表回合結束，可以讓選擇「收下」的學生登記分數，然後準備下一回合。</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="game-column">
+                <div class="game-display">
+                    <div class="score-container">
+                        <p>本回合分數</p>
+                        <div id="round-score">0</div>
+                    </div>
+                    <div id="die-display">🎲</div>
+                    <p id="game-status">點擊「擲骰子」開始！</p>
+                </div>
+        
+                <div class="controls">
+                    <button id="roll-btn">擲骰子</button>
+                    <button id="hold-btn">收下分數</button>
+                    <button id="reset-btn">新遊戲</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const roundScoreEl = document.getElementById('round-score');
+        const dieDisplayEl = document.getElementById('die-display');
+        const gameStatusEl = document.getElementById('game-status');
+        const rollBtn = document.getElementById('roll-btn');
+        const holdBtn = document.getElementById('hold-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // --- Game State ---
+        let roundScore = 0;
+        const diceUnicode = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+
+        function newGame() {
+            roundScore = 0;
+            updateUI();
+            gameStatusEl.textContent = '點擊「擲骰子」開始！';
+            rollBtn.disabled = false;
+            holdBtn.disabled = false;
+            holdBtn.textContent = "收下分數";
+        }
+
+        function updateUI() {
+            roundScoreEl.textContent = roundScore;
+        }
+
+        function handleRoll() {
+            const dieValue = Math.floor(Math.random() * 6) + 1;
+            dieDisplayEl.textContent = diceUnicode[dieValue - 1];
+
+            if (dieValue === 1) {
+                roundScore = 0;
+                updateUI();
+                gameStatusEl.textContent = '💥 喔不！擲出 1，本回合分數歸零！';
+                rollBtn.disabled = true;
+                holdBtn.textContent = "下一回合";
+            } else {
+                roundScore += dieValue;
+                updateUI();
+                gameStatusEl.textContent = `擲出了 ${dieValue}！`;
+                holdBtn.textContent = "收下分數";
+            }
+        }
+        
+        function handleHold() {
+            if (rollBtn.disabled) {
+                 gameStatusEl.textContent = '準備開始新回合！';
+            } else {
+                 gameStatusEl.textContent = `回合結束！得分為 ${roundScore} 分。`;
+            }
+            setTimeout(newGame, 1500);
+        }
+
+        // --- Event Listeners ---
+        rollBtn.addEventListener('click', handleRoll);
+        holdBtn.addEventListener('click', handleHold);
+        resetBtn.addEventListener('click', newGame);
+
+        // --- Initial Load ---
+        newGame();
+    </script>
+</body>
+</html>
